@@ -1,18 +1,21 @@
+
+
 import View.UserInterface;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class Main {
 
     public static void main(String[] args) throws SQLException {
         UserInterface ui = new UserInterface(System.in, System.out);
         new Main(ui).run();
+
     }
 
     UserInterface ui;
 
-    Main(UserInterface ui) {
+    Main(UserInterface ui) throws SQLException {
         this.ui = ui;
     }
 
@@ -40,8 +43,8 @@ public class Main {
             }
         }
     }
-    private DataSource connect() throws SQLException {
-        //SQL Connection
-      return null;
+    private Connection connect() throws SQLException {
+        Connection conn = DriverManager.getConnection("jdbc:mariadb://localhost/test", "evelin", "password");
+        return conn;
     }
 }
