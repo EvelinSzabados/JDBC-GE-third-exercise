@@ -49,7 +49,7 @@ public class DataManager {
                 "GROUP BY series_type;";
         Statement st = conn.createStatement();
         ResultSet rs = st.executeQuery(query);
-        StringBuilder result = new StringBuilder("Average series duration: \n");
+        StringBuilder result = new StringBuilder();
 
         while (rs.next()) {
             result.append(rs.getString("series_type"))
@@ -58,8 +58,19 @@ public class DataManager {
         return result.toString();
     }
 
-    public String getDataTypeWithHighestDiagnostic() {
-        return "Data type with highest diagnostic: ";
+    public String getDataTypeWithHighestDiagnostic() throws SQLException {
+        String query = "SELECT device.data_type, COUNT(*) AS count FROM device " +
+                "INNER JOIN study ON study.ae_key = device.device_key " +
+                "INNER JOIN serie ON study.id = serie.study_key " +
+                "WHERE serie.diagnostic = 'Y' " +
+                "GROUP BY device.data_type " +
+                "ORDER BY count DESC LIMIT 1;";
+
+        Statement st = conn.createStatement();
+        ResultSet rs = st.executeQuery(query);
+        rs.first();
+
+        return rs.getString("data_type") +": " + rs.getInt("count");
     }
 
 }
