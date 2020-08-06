@@ -1,22 +1,21 @@
-
-
-import View.UserInterface;
-
-import javax.sql.DataSource;
 import java.sql.*;
 
 public class Main {
 
     public static void main(String[] args) throws SQLException {
         UserInterface ui = new UserInterface(System.in, System.out);
-        new Main(ui).run();
+        Connection conn = connect();
+        DataManager dataManager = new DataManager(conn);
+        new Main(ui, dataManager).run();
 
     }
 
     UserInterface ui;
+    DataManager dataManager;
 
-    Main(UserInterface ui) throws SQLException {
+    Main(UserInterface ui, DataManager dataManager) throws SQLException {
         this.ui = ui;
+        this.dataManager = dataManager;
     }
 
     private void run() throws SQLException {
@@ -24,18 +23,24 @@ public class Main {
         boolean running = true;
 
         while (running) {
-            ui.printTitle("Menü");
-            ui.printOption('a', "4.legtöbb felvételt készítő gép");
-            ui.printOption('b', "Legzsúfoltabb nap");
-            ui.printOption('c', "Átlagos képkészítési idő  képtípusonként");
-            ui.printOption('d', "Legmagasabb a diagnosztikai eredményességű adattípus");
-            ui.printOption('q', "Kilépés");
+            ui.printTitle("Menu");
+            ui.printOption('a', "Get the 4th busiest machine");
+            ui.printOption('b', "Get the busiest day");
+            ui.printOption('c', "Get average series duration/series type");
+            ui.printOption('d', "Get data type w/ highest diagnostic value");
+            ui.printOption('q', "Exit");
             switch (ui.choice("abcdq")) {
                 case 'a':
+                    ui.println(dataManager.get4thBusiestMachine());
+                    break;
                 case 'b':
+                    ui.println(dataManager.getBusiestDay());
+                    break;
                 case 'c':
+                    ui.println(dataManager.getAverageSeriesDurationPerSeriesType());
+                    break;
                 case 'd':
-                    ui.println("Folyamatban...");
+                    ui.println(dataManager.getDataTypeWithHighestDiagnostic());
                     break;
                 case 'q':
                     running = false;
@@ -43,8 +48,9 @@ public class Main {
             }
         }
     }
-    private Connection connect() throws SQLException {
-        Connection conn = DriverManager.getConnection("jdbc:mariadb://localhost/test", "evelin", "password");
+
+    private static Connection connect() throws SQLException {
+        Connection conn = DriverManager.getConnection("jdbc:mariadb://localhost/dwh", "evelin", "password");
         return conn;
     }
 }

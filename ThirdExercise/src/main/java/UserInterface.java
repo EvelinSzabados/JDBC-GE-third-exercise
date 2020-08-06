@@ -1,5 +1,3 @@
-package View;
-
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
@@ -7,6 +5,9 @@ import java.util.Scanner;
 public class UserInterface {
     Scanner scanner;
     PrintStream out;
+    String RESET = "\u001B[0m";
+    String GREEN = "\u001B[92m";
+    String BLUE = "\u001B[94m";
 
     public UserInterface(InputStream in, PrintStream out) {
         this.scanner = new Scanner(in);
@@ -14,11 +15,11 @@ public class UserInterface {
     }
 
     public void println(Object obj) {
-        out.println(obj);
+        out.println(GREEN + obj + RESET);
     }
 
     public void printTitle(String title) {
-        out.println("\n -- " + title + " --");
+        out.println(BLUE + "\n -- " + title + " --" + RESET);
     }
 
     public void printOption(char option, String description) {
@@ -28,16 +29,10 @@ public class UserInterface {
     public char choice(String options) {
         String line;
         do {
-            out.print("Opciók [" + options + "]: ");
+            out.print(BLUE + "Options [" + options + "]: " + RESET);
             line = scanner.nextLine();
         } while (!(line.length() == 1 && options.contains(line)));
         return line.charAt(0);
-    }
-
-    public String readString(String prompt, String defaultValue) {
-        printPrompt(prompt, defaultValue);
-        String line = scanner.nextLine();
-        return line.isEmpty() ? defaultValue : line;
     }
 
     private void printPrompt(String prompt, Object defaultValue) {
