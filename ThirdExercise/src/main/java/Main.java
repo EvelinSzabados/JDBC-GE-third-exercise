@@ -44,13 +44,13 @@ public class Main {
                     break;
                 case 'q':
                     running = false;
+                    ui.println("See you next time!");
                     break;
             }
         }
     }
 
     private static Connection connect() throws SQLException {
-        Connection conn = DriverManager.getConnection("jdbc:mariadb://localhost/dwh", "evelin", "password");
-        return conn;
+        return DriverManager.getConnection("jdbc:mariadb://localhost/dwh", "evelin", "password");
     }
 }
