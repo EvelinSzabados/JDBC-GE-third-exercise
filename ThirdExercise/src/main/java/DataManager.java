@@ -2,8 +2,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DataManager {
 
@@ -16,19 +14,16 @@ public class DataManager {
     public String get4thBusiestMachine() throws SQLException {
 
         String query = "SELECT device.name, COUNT(*) AS count FROM device " +
-                "INNER JOIN study ON study.ae_key = device.device_key " +
+                "INNER JOIN study ON study.ae_key = device.id " +
                 "GROUP BY device.name " +
                 "ORDER BY count DESC " +
-                "LIMIT 4;";
+                "LIMIT 3,1;";
 
         Statement st = conn.createStatement();
         ResultSet rs = st.executeQuery(query);
-        List<String> busiestMachines = new ArrayList<String>();
-        while (rs.next()) {
-            busiestMachines.add(rs.getString("name"));
-        }
+        rs.first();
 
-        return busiestMachines.get(3);
+        return rs.getString("name");
     }
 
     public String getBusiestDay() throws SQLException {
@@ -60,7 +55,7 @@ public class DataManager {
 
     public String getDataTypeWithHighestDiagnostic() throws SQLException {
         String query = "SELECT device.data_type, COUNT(*) AS count FROM device " +
-                "INNER JOIN study ON study.ae_key = device.device_key " +
+                "INNER JOIN study ON study.ae_key = device.id " +
                 "INNER JOIN serie ON study.id = serie.study_key " +
                 "WHERE serie.diagnostic = 'Y' " +
                 "GROUP BY device.data_type " +
@@ -70,7 +65,7 @@ public class DataManager {
         ResultSet rs = st.executeQuery(query);
         rs.first();
 
-        return rs.getString("data_type") +": " + rs.getInt("count");
+        return rs.getString("data_type") + ": " + rs.getInt("count");
     }
 
 }
